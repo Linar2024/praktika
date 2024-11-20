@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class player : MonoBehaviour
 {
@@ -9,53 +11,76 @@ public class player : MonoBehaviour
     public GameObject unhide;
     public GameObject canvas;
     public ParticleSystem particle;
-    public GameObject light;
+    public GameObject rotateobject;
+    int enemyhealth = 5;
+    public Button shootenemy;
+    
+    //public Button shootenemy;
+    // Speed of rotation
     // Start is called before the first frame update
     void Start()
     {
-
+        //shootenemy.interactable = false;
+        //shootenemy.gameObject.SetActive(false);
         unhide.SetActive(false);
-        light.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Shoot();
-        }
+       
+       
+
     }
     public void TakeGun()
     {
         if (animator.GetBool("gun") == false)
         {
+            Debug.Log("takegun");
             animator.SetBool("takegun", true);
-            canvas.SetActive(false);
+            //canvas.SetActive(false);
+            //shootenemy.interactable = true;
+            shootenemy.gameObject.SetActive(true);
         }
             
     }
     IEnumerator Particle()
     {
-        light.SetActive(true);
         particle.Play();
         yield return new WaitForSeconds(0.1f);
-        light.SetActive(false);
     }
     public void Shoot()
     {
         if (animator.GetBool("gun"))
         {
+            Debug.Log("shoot");
+            enemyhealth = enemyhealth - 1;
             animator.SetBool("gun", false);
             animator.SetBool("shoot", true);
+            animator.SetInteger("enemyhealth", enemyhealth);
+            //shootenemy.interactable = false;
+            shootenemy.gameObject.SetActive(false);
         }
             
+    }
+    public void ShootSelf()
+    {
+        if (animator.GetBool("gun"))
+        {
+           
+            animator.SetBool("gun", false);
+            animator.SetBool("shootself", true);
+            //shootenemy.interactable = false;
+            shootenemy.gameObject.SetActive(false);
+        }
+
     }
     IEnumerator ShootOFf()
     {
         animator.SetBool("shoot", false);
+        animator.SetBool("shootself", false);
         yield return new WaitForSeconds(0.01f);
-        canvas.SetActive(true);
+ 
     }
     IEnumerator Takeoff()
     {
@@ -77,4 +102,10 @@ public class player : MonoBehaviour
         yield return new WaitForSeconds(0.01f);
 
     }
+    IEnumerator Rotate()
+    {
+        animator.SetBool("rotate", true);
+        yield return new WaitForSeconds(0.01f);
+    }
+
 }

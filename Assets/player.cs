@@ -3,19 +3,25 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 public class player : MonoBehaviour
 {
     public Animator animator;
     public Animator animator2;
     public Animator animator3;
+    public Animator animator4;
     public GameObject hide;
     public GameObject unhide;
     public GameObject canvas;
+    public GameObject knife;
+    public GameObject part1;
+    public GameObject part2;
+    public GameObject part3;
     public ParticleSystem particle;
     public GameObject rotateobject;
     int enemyhealth = 5;
     int health = 5;
+    int damage = 1;
     public Button shootenemy;
     int[] bullets = new int[8];
     int bulletscount;
@@ -23,7 +29,8 @@ public class player : MonoBehaviour
     int live = 0;
     int shell = 0;
     int random = 0;
-    bool can = false;
+    int score = 0;
+    bool can = true;
     //public Button shootenemy;
     // Speed of rotation
     // Start is called before the first frame update
@@ -43,14 +50,18 @@ public class player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-
-        
+        //if (animator.GetInteger("enemyhealth") <= 0 || animator.GetInteger("health") <= 0)
+            //SceneManager.LoadScene("menu");
+        if (animator.GetInteger("health") <= 0  )
+            animator.SetBool("fulldeath", true);
+        if (animator.GetInteger("enemyhealth") <= 0)
+            animator4.SetBool("fulldeath", true);
     }
     public void TakeGun()
     {
-        if (animator.GetBool("gun") == false && animator.GetBool("can") && animator3.GetBool("playerturn") && animator2.GetBool("showbullets") == false)
+        if (animator.GetBool("gun") == false && animator.GetBool("can") && animator3.GetBool("playerturn") && animator2.GetBool("showbullets") == false && animator.GetBool("death") == false && animator.GetBool("useknife") == false)
         {
+            //can = false;
             Debug.Log("takegun");
             animator.SetBool("takegun", true);
             //canvas.SetActive(false);
@@ -73,7 +84,7 @@ public class player : MonoBehaviour
         {
 
 
-            if (live < animator2.GetInteger("live") && shell < animator2.GetInteger("shell"))
+            if (animator2.GetInteger("currentlive") < animator2.GetInteger("live") && (animator2.GetInteger("currentshell") < animator2.GetInteger("shell")))
             {
                 bullets[animator2.GetInteger("currentbullet")] = Random.Range(0, 2);
                 if (bullets[animator2.GetInteger("currentbullet")] == 1)
@@ -89,13 +100,13 @@ public class player : MonoBehaviour
             }
             else
             {
-                if (shell < animator2.GetInteger("shell"))
+                if (animator2.GetInteger("currentshell") < animator2.GetInteger("shell"))
                 {
                     bullets[animator2.GetInteger("currentbullet")] = 0;
                     shell++;
                     animator2.SetInteger("currentshell", animator2.GetInteger("currentshell") + 1);
                 }
-                if (live < animator2.GetInteger("live"))
+                if (animator2.GetInteger("currentlive") < animator2.GetInteger("live"))
                 {
                     bullets[animator2.GetInteger("currentbullet")] = 1;
                     live++;
@@ -112,10 +123,19 @@ public class player : MonoBehaviour
                 animator2.SetInteger("currentbullet", animator2.GetInteger("currentbullet") + 1);
                 //bulletscount--;
                 //animator2.SetInteger("bullets", bulletscount);
+                
                 enemyhealth = enemyhealth - 1;
+                if (enemyhealth > 0)
+                    animator4.SetBool("death", true);
+                if (enemyhealth == 0)
+                    animator4.SetBool("fulldeath", true);
+                score = score + Random.Range(10, 30);
+                animator.SetInteger("score", score);
                 animator.SetBool("gun", false);
                 animator.SetBool("shoot", true);
-                animator.SetInteger("enemyhealth", enemyhealth);
+                animator.SetInteger("enemyhealth", animator.GetInteger("enemyhealth") - animator.GetInteger("damage"));
+                damage = 1;
+                animator.SetInteger("damage", 1);
                 StartCoroutine(EnemyTurn());
                 shootenemy.gameObject.SetActive(false);
                 
@@ -158,7 +178,7 @@ public class player : MonoBehaviour
         
         if (animator.GetBool("gun"))
         {
-            if (live < animator2.GetInteger("live") && shell < animator2.GetInteger("shell"))
+            if (animator2.GetInteger("currentlive") < animator2.GetInteger("live") && (animator2.GetInteger("currentshell") < animator2.GetInteger("shell")))
             {
                 bullets[animator2.GetInteger("currentbullet")] = Random.Range(0, 2);
                 if (bullets[animator2.GetInteger("currentbullet")] == 1)
@@ -174,13 +194,13 @@ public class player : MonoBehaviour
             }
             else
             {
-                if (shell < animator2.GetInteger("shell"))
+                if (animator2.GetInteger("currentshell") < animator2.GetInteger("shell"))
                 {
                     bullets[animator2.GetInteger("currentbullet")] = 0;
                     shell++;
                     animator2.SetInteger("currentshell", animator2.GetInteger("currentshell") + 1);
                 }
-                if (live < animator2.GetInteger("live"))
+                if (animator2.GetInteger("currentlive") < animator2.GetInteger("live"))
                 {
                     bullets[animator2.GetInteger("currentbullet")] = 1;
                     live++;
@@ -189,13 +209,16 @@ public class player : MonoBehaviour
                 }
             }
 
+
             if (bullets[currentbullet] == 1 )
             {
                 Debug.Log("shootself");
                 Debug.Log(bullets[currentbullet]);
                 currentbullet++;
                 animator2.SetInteger("currentbullet", animator2.GetInteger("currentbullet") + 1);
-                health = health - 1;
+                health = health - animator.GetInteger("damage");
+                damage = 1;
+                animator.SetInteger("damage", 1);
                 animator.SetBool("gun", false);
                 animator.SetBool("shootself2", true);
                 animator.SetInteger("health", health);
@@ -207,6 +230,7 @@ public class player : MonoBehaviour
             {
                 currentbullet++;
                 animator2.SetInteger("currentbullet", animator2.GetInteger("currentbullet") + 1);
+                animator.SetBool("can", true);
                 animator.SetBool("gun", false);
                 animator.SetBool("shootself", true);
                 StartCoroutine(PlayerTurn());
@@ -226,6 +250,14 @@ public class player : MonoBehaviour
         yield return new WaitForSeconds(0.01f);
  
     }
+    IEnumerator UsingOff()
+    {
+        animator.SetBool("useknife", false);
+        animator.SetInteger("damage", 2);
+        yield return new WaitForSeconds(0.01f);
+
+    }
+
     IEnumerator PlayerTurn()
     {
         
@@ -234,13 +266,20 @@ public class player : MonoBehaviour
         animator3.SetBool("enemyturn", false);
         Debug.Log("player");
     }
-    IEnumerator EnemyTurn()
+    IEnumerator DeathOFf()
     {
 
+        yield return new WaitForSeconds(0.01f);
+        animator.SetBool("death", false);
+    }
+    IEnumerator EnemyTurn()
+    {
+        animator.SetBool("can", false);
         yield return new WaitForSeconds(1.5f);
         animator3.SetBool("playerturn", false);
         animator3.SetBool("enemyturn", true);
         Debug.Log("enemy");
+        animator4.SetBool("can", true);
     }
     IEnumerator Takeoff()
     {
@@ -254,6 +293,34 @@ public class player : MonoBehaviour
         unhide.SetActive(true);
         yield return new WaitForSeconds(0.01f);
         
+    }
+    IEnumerator KnifeOn()
+    {
+        knife.SetActive(true);
+        yield return new WaitForSeconds(0.01f);
+
+    }
+    IEnumerator Used()
+    {
+        part1.SetActive(false);
+        part2.SetActive(false);
+        part3.SetActive(false);
+        yield return new WaitForSeconds(0.01f);
+
+    }
+    IEnumerator UsedOff()
+    {
+        part1.SetActive(true);
+        part2.SetActive(true);
+        part3.SetActive(true);
+        yield return new WaitForSeconds(0.01f);
+
+    }
+    IEnumerator KnifeOff()
+    {
+        knife.SetActive(false);
+        yield return new WaitForSeconds(0.01f);
+
     }
     IEnumerator UnHide()
     {

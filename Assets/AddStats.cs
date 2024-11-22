@@ -2,17 +2,33 @@ using UnityEngine;
 using UnityEngine.Networking;
 using System.Collections;
 using System;
-
+using UnityEngine.SceneManagement;
 public class ApiConnector : MonoBehaviour
 {
     private string apiUrl = "http://127.0.0.1:5000/addstats"; // Замените на ваш URL
-
+    public Animator animator;
+    public Animator animator2;
+    bool can = true;
     void Start()
     {
-        PostData();
+        can = true;
         // Пример данных для отправки
-        var dataToSend = new { score = 3245324};
+        var dataToSend = new { score = animator.GetInteger("score")};
         //StartCoroutine(PostDataToApi(dataToSend));
+    }
+    public void Update()
+    {
+        if (animator.GetBool("fulldeath") || animator2.GetBool("fulldeath"))
+        {
+            if (can == true)
+            {
+                can = false;   
+                PostData();
+                StartCoroutine(Wait());
+            }
+            
+        }
+            
     }
 
     [Serializable]
@@ -25,7 +41,7 @@ public class ApiConnector : MonoBehaviour
     {
 
         Quark gamer = new Quark();
-        gamer.score = "4353453";
+        gamer.score = animator.GetInteger("score").ToString();
 
         string json = JsonUtility.ToJson(gamer);
         StartCoroutine(PostRequest("http://127.0.0.1:5000/addstats", json));
@@ -50,6 +66,12 @@ public class ApiConnector : MonoBehaviour
         {
             Debug.Log("Received: " + uwr.downloadHandler.text);
         }
+    }
+    IEnumerator Wait()
+    {
+
+        yield return new WaitForSeconds(0.7f);
+        SceneManager.LoadScene("menu");
     }
 }
 

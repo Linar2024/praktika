@@ -17,9 +17,17 @@ public class enemy : MonoBehaviour
     public GameObject canvas;
     public GameObject part1;
     public GameObject part2;
+    public GameObject bear;
+    public GameObject bullet;
+    public GameObject bear2;
     public GameObject part3;
     public ParticleSystem particle;
     public GameObject rotateobject;
+    public AudioSource src;
+    public AudioClip sound;
+    public AudioClip sound2;
+    public Material live2;
+    public Material shell2;
     int enemyhealth = 5;
     int health = 5;
     public Button shootenemy;
@@ -46,6 +54,7 @@ public class enemy : MonoBehaviour
         shell = animator2.GetInteger("currentshell");
         bulletscount = animator2.GetInteger("bullets") - currentbullet;
         health = animator4.GetInteger("health");
+        src = gameObject.AddComponent(typeof(AudioSource)) as AudioSource;
     }
 
     // Update is called once per frame
@@ -66,12 +75,17 @@ public class enemy : MonoBehaviour
         {
             animator.SetBool("takegun", false);
         }
-   
+        if (animator3.GetBool("playerturn") == true)
+        {
+            animator.SetBool("useknife", false);
+            animator.SetBool("usebear", false);
+        }
+
 
     }
     public void TakeGun()
     {
-        if (animator.GetBool("gun") == false && animator3.GetBool("enemyturn") && animator3.GetBool("playerturn") == false && animator2.GetBool("showbullets") == false && animator.GetBool("death") == false && animator.GetBool("can"))
+        if (animator.GetBool("gun") == false && animator3.GetBool("enemyturn") && animator3.GetBool("playerturn") == false && animator2.GetBool("showbullets") == false && animator.GetBool("death") == false && animator.GetBool("can") && animator2.GetBool("getitems") == false && animator.GetBool("usebear") == false)
         {
             bulletscount = animator2.GetInteger("bullets") - currentbullet;
             Debug.Log("takegun");
@@ -136,7 +150,8 @@ public class enemy : MonoBehaviour
                 animator2.SetInteger("currentbullet", animator2.GetInteger("currentbullet") + 1);
                 //bulletscount--;
                 //animator2.SetInteger("bullets", bulletscount);
-               
+                src.clip = sound;
+                src.Play();
                 health = health - 1;
                 if (enemyhealth > 0)
                     animator4.SetBool("death", true);
@@ -157,7 +172,10 @@ public class enemy : MonoBehaviour
                 Debug.Log(bullets[animator2.GetInteger("currentbullet")]);
                 currentbullet++;
                 animator2.SetInteger("currentbullet", animator2.GetInteger("currentbullet") + 1);
+                src.clip = sound2;
+                src.Play();
                 //bulletscount--;
+                animator.SetInteger("damage", 1);
                 //animator2.SetInteger("bullets", bulletscount);
                 animator.SetBool("gun", false);
                 animator.SetBool("shoot2", true);
@@ -234,6 +252,8 @@ public class enemy : MonoBehaviour
                 Debug.Log(bullets[animator2.GetInteger("currentbullet")]);
                 currentbullet++;
                 animator2.SetInteger("currentbullet", animator2.GetInteger("currentbullet") + 1);
+                src.clip = sound;
+                src.Play();
                 enemyhealth = enemyhealth - 1;
                 animator.SetBool("gun", false);
                 animator.SetBool("shootself2", true);
@@ -247,9 +267,12 @@ public class enemy : MonoBehaviour
             {
                 currentbullet++;
                 animator2.SetInteger("currentbullet", animator2.GetInteger("currentbullet") + 1);
+                src.clip = sound2;
+                src.Play();
                 animator.SetBool("can", true);
                 animator.SetBool("gun", false);
                 animator.SetBool("shootself", true);
+                animator.SetInteger("damage", 1);
                 StartCoroutine(EnemyTurn());
                 shootenemy.gameObject.SetActive(false);
             }
@@ -279,16 +302,51 @@ public class enemy : MonoBehaviour
         
         int use = Random.Range(0, 2);
         int choose = Random.Range(0, 2);
-        yield return new WaitForSeconds(2f);   
-        if (knife2.activeSelf && use == 1 && animator2.GetBool("showbullets") == false)
+        yield return new WaitForSeconds(2f);
+        int item = Random.Range(0, 2);
+        if (knife2.activeSelf && bear2.activeSelf && use == 1 && animator3.GetBool("playerturn") == false)
         {
-            used = true;
-            animator.SetBool("useknife", true);
-            yield return new WaitForSeconds(2f);
-            TakeGun();
-        }        
+            
+            if (item == 0 && animator2.GetBool("showbullets") == false && animator2.GetBool("getitems") == false )
+            {
+                used = true;
+                animator.SetBool("useknife", true);
+                yield return new WaitForSeconds(2f);
+                TakeGun();
+            }
+            if (item == 1 && animator2.GetBool("showbullets") == false && animator2.GetBool("getitems") == false && animator3.GetBool("playerturn") == false)
+            {
+                
+                animator.SetBool("usebear", true);
+                yield return new WaitForSeconds(2f);
+                TakeGun();
+            }
+        }
         else
-            TakeGun();
+        {
+            if (knife2.activeSelf && use == 1 && animator2.GetBool("showbullets") == false && animator2.GetBool("getitems") == false)
+            {
+                used = true;
+                animator.SetBool("useknife", true);
+                yield return new WaitForSeconds(2f);
+                TakeGun();
+            }
+            else
+            {
+                if (bear2.activeSelf && use == 1 && animator2.GetBool("showbullets") == false && animator2.GetBool("getitems") == false && animator3.GetBool("playerturn") == false)
+                {
+                    
+                    animator.SetBool("usebear", true);
+                    yield return new WaitForSeconds(2f);
+                    TakeGun();
+                }
+                else
+                    TakeGun();
+            }
+            
+
+        }
+        
 
         yield return new WaitForSeconds(2f);
 
@@ -323,6 +381,93 @@ public class enemy : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
         can = true;
+    }
+    IEnumerator BearOff()
+    {
+        animator.SetBool("usebear", false);
+
+        yield return new WaitForSeconds(0.01f);
+
+    }
+    IEnumerator Skip()
+    {
+
+
+        if (animator2.GetInteger("currentlive") < animator2.GetInteger("live") && (animator2.GetInteger("currentshell") < animator2.GetInteger("shell")))
+        {
+            bullets[animator2.GetInteger("currentbullet")] = Random.Range(0, 2);
+            if (bullets[animator2.GetInteger("currentbullet")] == 1)
+            {
+                live++;
+                animator2.SetInteger("currentlive", animator2.GetInteger("currentlive") + 1);
+                animator2.SetInteger("currentbullet", animator2.GetInteger("currentbullet") + 1);
+                Renderer renderer = bullet.GetComponent<Renderer>();
+                Material[] materials = renderer.materials;
+                materials[0] = live2;
+                renderer.materials = materials;
+            }
+            else
+            {
+                shell++;
+                animator2.SetInteger("currentshell", animator2.GetInteger("currentshell") + 1);
+                animator2.SetInteger("currentbullet", animator2.GetInteger("currentbullet") + 1);
+                Renderer renderer = bullet.GetComponent<Renderer>();
+                Material[] materials = renderer.materials;
+                materials[0] = shell2;
+                renderer.materials = materials;
+            }
+        }
+        else
+        {
+            if (animator2.GetInteger("currentshell") < animator2.GetInteger("shell"))
+            {
+                bullets[animator2.GetInteger("currentbullet")] = 0;
+                shell++;
+                animator2.SetInteger("currentbullet", animator2.GetInteger("currentbullet") + 1);
+                Renderer renderer = bullet.GetComponent<Renderer>();
+                Material[] materials = renderer.materials;
+                materials[0] = shell2;
+                renderer.materials = materials;
+                animator2.SetInteger("currentshell", animator2.GetInteger("currentshell") + 1);
+            }
+            if (animator2.GetInteger("currentlive") < animator2.GetInteger("live"))
+            {
+                bullets[animator2.GetInteger("currentbullet")] = 1;
+                live++;
+                animator2.SetInteger("currentbullet", animator2.GetInteger("currentbullet") + 1);
+                Renderer renderer = bullet.GetComponent<Renderer>();
+                Material[] materials = renderer.materials;
+                materials[0] = live2;
+                renderer.materials = materials;
+                animator2.SetInteger("currentlive", animator2.GetInteger("currentlive") + 1);
+
+            }
+
+        }
+        if (animator2.GetInteger("currentbullet") == animator2.GetInteger("bullets"))
+        {
+            bulletscount = 0;
+            animator2.SetInteger("bullets", bulletscount);
+            animator2.SetInteger("currentlive", 0);
+            animator2.SetInteger("currentshell", 0);
+            animator2.SetInteger("currentbullet", 0);
+        }
+        yield return new WaitForSeconds(0.01f);
+
+    }
+    IEnumerator BearOf()
+    {
+        bear.SetActive(false);
+        yield return new WaitForSeconds(0.01f);
+
+    }
+
+    IEnumerator BearOn()
+    {
+        bear.SetActive(true);
+        bear2.SetActive(false);
+        yield return new WaitForSeconds(0.01f);
+
     }
     IEnumerator Used()
     {

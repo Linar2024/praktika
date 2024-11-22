@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class knife : MonoBehaviour
+public class beer : MonoBehaviour
 {
     public Animator animator;
     public Animator animator2;
@@ -18,16 +18,16 @@ public class knife : MonoBehaviour
     }
     void OnMouseDown()
     {
-        if(animator.GetBool("showbullets") == false && animator2.GetBool("playerturn") && animator2.GetBool("getitems") == false && animator.GetBool("usebear") == false)
+        if (animator.GetBool("showbullets") == false && animator2.GetBool("playerturn") && animator2.GetBool("getitems") == false && animator.GetBool("useknife") == false)
         {
-            animator.SetBool("useknife", true);
+            animator.SetBool("usebear", true);
             StartCoroutine(ShootOFf());
         }
     }
     IEnumerator ShootOFf()
     {
 
-        yield return new WaitForSeconds(0.4f);
+        yield return new WaitForSeconds(0.55f);
         gameObject.SetActive(false);
     }
 }

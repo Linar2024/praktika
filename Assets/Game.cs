@@ -13,6 +13,8 @@ public class Game : MonoBehaviour
     bool startgame = true;
     public GameObject knife1;
     public GameObject knife2;
+    public GameObject can;
+    public GameObject can2;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -68,7 +70,8 @@ public class Game : MonoBehaviour
         yield return new WaitForSeconds(2.3f);
         knife1.SetActive(true);
         knife2.SetActive(true);
-
+        can.SetActive(true);
+        can2.SetActive(true);
     }
     IEnumerator FalseGet()
     {
@@ -76,7 +79,6 @@ public class Game : MonoBehaviour
 
         yield return new WaitForSeconds(0f);
         animator2.SetBool("can", true);
-
     }
     IEnumerator FalseShow()
     {

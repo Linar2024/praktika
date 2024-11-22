@@ -63,7 +63,7 @@ public class Game : MonoBehaviour
     IEnumerator GetItems()
     {
 
-        yield return new WaitForSeconds(7f);
+        yield return new WaitForSeconds(6f);
         animator.SetBool("getitems", true);
         yield return new WaitForSeconds(2.3f);
         knife1.SetActive(true);

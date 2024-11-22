@@ -321,7 +321,7 @@ public class enemy : MonoBehaviour
             Shoot();
         }
 
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(2f);
         can = true;
     }
     IEnumerator Used()

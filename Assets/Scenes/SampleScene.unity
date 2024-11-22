@@ -6371,6 +6371,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 4748377626029664093}
+  animator2: {fileID: 1024067069}
 --- !u!54 &1180690222
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6495,7 +6496,7 @@ GameObject:
   - component: {fileID: 1239195820}
   - component: {fileID: 1239195819}
   - component: {fileID: 1239195818}
-  - component: {fileID: 1239195817}
+  - component: {fileID: 1239195821}
   m_Layer: 0
   m_Name: knife (1)
   m_TagString: Untagged
@@ -6503,19 +6504,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &1239195817
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1239195816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3956f9d5fc20bd7439a4a27da3c26a41, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animator: {fileID: 4748377626029664093}
 --- !u!54 &1239195818
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6580,6 +6568,20 @@ Transform:
   - {fileID: 1649437711}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -89.809, y: -308.572, z: 0.004}
+--- !u!114 &1239195821
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239195816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 612bdfc79ff159240afa22cf00c729ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 2365338146014794295}
+  animator2: {fileID: 1024067069}
 --- !u!1 &1256793330
 GameObject:
   m_ObjectHideFlags: 0

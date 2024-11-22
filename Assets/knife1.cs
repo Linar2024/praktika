@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-public class knife : MonoBehaviour
+public class knife1 : MonoBehaviour
 {
     public Animator animator;
     public Animator animator2;
@@ -18,7 +18,7 @@ public class knife : MonoBehaviour
     }
     void OnMouseDown()
     {
-        if(animator.GetBool("showbullets") == false && animator2.GetBool("playerturn") && animator2.GetBool("getitems") == false)
+        if(animator.GetBool("showbullets") == false && animator2.GetBool("enemyturn") )
         {
             animator.SetBool("useknife", true);
             StartCoroutine(ShootOFf());

@@ -59,7 +59,7 @@ public class player : MonoBehaviour
     }
     public void TakeGun()
     {
-        if (animator.GetBool("gun") == false && animator.GetBool("can") && animator3.GetBool("playerturn") && animator2.GetBool("showbullets") == false && animator.GetBool("death") == false && animator.GetBool("useknife") == false)
+        if (animator.GetBool("gun") == false && animator.GetBool("can") && animator3.GetBool("playerturn") && animator2.GetBool("showbullets") == false && animator.GetBool("death") == false && animator.GetBool("useknife") == false && animator2.GetBool("getitems") == false)
         {
             //can = false;
             Debug.Log("takegun");
